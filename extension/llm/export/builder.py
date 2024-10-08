@@ -29,6 +29,7 @@ from executorch.exir.passes.sym_shape_eval_pass import ConstraintBasedSymShapeEv
 
 from executorch.extension.export_util.utils import export_to_edge, save_pte_program
 from executorch.extension.llm.tokenizer.utils import get_tokenizer
+from torch._export import capture_pre_autograd_graph
 from torch.ao.quantization.quantize_pt2e import convert_pt2e, prepare_pt2e
 from torch.ao.quantization.quantizer import Quantizer
 from torch.ao.quantization.quantizer.composable_quantizer import ComposableQuantizer
@@ -190,9 +191,9 @@ class LLMEdgeManager:
                     strict=True,
                 ).module()
             else:
-                self.pre_autograd_graph_module = export_for_training(
+                self.pre_autograd_graph_module = capture_pre_autograd_graph(
                     self.model, self.example_inputs, dynamic_shapes=dynamic_shape
-                ).module()
+                )
 
         return self
 
