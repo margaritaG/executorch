@@ -152,33 +152,35 @@ test_model_with_qnn() {
 
   export LD_LIBRARY_PATH=$QNN_SDK_ROOT/lib/x86_64-linux-clang/
   export PYTHONPATH=$EXECUTORCH_ROOT/..
+  # QNN support fp16 only
+  DTYPE=fp16
 
   if [[ "${MODEL_NAME}" == "dl3" ]]; then
     EXPORT_SCRIPT=deeplab_v3
-    EXPORTED_MODEL_NAME=dlv3_qnn.pte
+    EXPORTED_MODEL_NAME=deeplab-v3_qnn_${DTYPE}.pte
   elif [[ "${MODEL_NAME}" == "mv3" ]]; then
     EXPORT_SCRIPT=mobilenet_v3
-    EXPORTED_MODEL_NAME=mv3_qnn.pte
+    EXPORTED_MODEL_NAME=mobilenet-v3_qnn_${DTYPE}.pte
   elif [[ "${MODEL_NAME}" == "mv2" ]]; then
     EXPORT_SCRIPT=mobilenet_v2
-    EXPORTED_MODEL_NAME=mv2_qnn.pte
+    EXPORTED_MODEL_NAME=mobilenet-v2_qnn_${DTYPE}.pte
   elif [[ "${MODEL_NAME}" == "ic4" ]]; then
     EXPORT_SCRIPT=inception_v4
-    EXPORTED_MODEL_NAME=ic4_qnn.pte
+    EXPORTED_MODEL_NAME=inception-v4_qnn_${DTYPE}.pte
   elif [[ "${MODEL_NAME}" == "ic3" ]]; then
     EXPORT_SCRIPT=inception_v3
-    EXPORTED_MODEL_NAME=ic3_qnn.pte
+    EXPORTED_MODEL_NAME=inception-v3_qnn_${DTYPE}.pte
   elif [[ "${MODEL_NAME}" == "vit" ]]; then
     EXPORT_SCRIPT=torchvision_vit
-    EXPORTED_MODEL_NAME=vit_qnn.pte
+    EXPORTED_MODEL_NAME=torchvision-vit_qnn_${DTYPE}.pte
   fi
 
   # Use SM8450 for S22, SM8550 for S23, and SM8560 for S24
   # TODO(guangyang): Make QNN chipset matches the target device
   QNN_CHIPSET=SM8450
 
-  "${PYTHON_EXECUTABLE}" -m examples.qualcomm.scripts.${EXPORT_SCRIPT} -b ${CMAKE_OUTPUT_DIR} -m ${QNN_CHIPSET} --compile_only
-  EXPORTED_MODEL=./${EXPORT_SCRIPT}/${EXPORTED_MODEL_NAME}
+  "${PYTHON_EXECUTABLE}" -m examples.qualcomm.scripts.${EXPORT_SCRIPT} -b ${CMAKE_OUTPUT_DIR} -m ${QNN_CHIPSET} -a ${EXPORTED_MODEL_NAME} --compile_only
+  EXPORTED_MODEL=./${EXPORTED_MODEL_NAME}
 }
 
 test_model_with_coreml() {

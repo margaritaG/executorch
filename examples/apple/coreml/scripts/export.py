@@ -110,9 +110,9 @@ def export_lowered_module_to_executorch_program(lowered_module, example_inputs):
     return exec_prog
 
 
-def save_executorch_program(exec_prog, model_name, compute_unit):
+def save_executorch_program(exec_prog, model_name, compute_unit, precision):
     buffer = exec_prog.buffer
-    filename = f"{model_name}_coreml_{compute_unit}.pte"
+    filename = f"{model_name}_coreml_{compute_unit}_{precision}.pte"
     print(f"Saving exported program to {filename}")
     with open(filename, "wb") as file:
         file.write(buffer)
@@ -189,7 +189,9 @@ def main():
             example_inputs,
         )
 
-    save_executorch_program(exec_program, args.model_name, args.compute_unit)
+    save_executorch_program(
+        exec_program, args.model_name, args.compute_unit, args.compute_precision
+    )
     generate_etrecord(f"{args.model_name}_coreml_etrecord.bin", edge_copy, exec_program)
 
     if args.save_processed_bytes and lowered_module is not None:
