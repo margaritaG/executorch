@@ -17,7 +17,7 @@
 
 namespace {
 
-using namespace torch::executor;
+using namespace executorch::runtime;
 
 uint64_t time_units_to_nano_seconds(uint64_t time_units) {
     static mach_timebase_info_data_t info;
@@ -109,7 +109,7 @@ void ModelEventLoggerImpl::log_intermediate_tensors(NSDictionary<ETCoreMLModelSt
     [op_path_to_value_map enumerateKeysAndObjectsUsingBlock:^(ETCoreMLModelStructurePath *path,
                                                               MLMultiArray *intermediate_value,
                                                               BOOL * _Nonnull __unused stop) {
-        using namespace torch::executor;
+        using namespace executorch::runtime;
 
         @autoreleasepool {
             NSString *debug_symbol = op_path_to_debug_symbol_name_map[path];
